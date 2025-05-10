@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import get_connection
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -72,4 +73,5 @@ def deletar_bookmark(id):
     return jsonify({"msg": "Deletado com sucesso"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # usa a porta fornecida pelo Render ou 5000 localmente
+    app.run(host="0.0.0.0", port=port, debug=True)
