@@ -14,6 +14,7 @@ Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, vi
 
 > 🔹 **Frontend (Vercel):** (https://vercel.com/home)  
 > 🔹 **Backend (Render):** (https://render.com/)
+
 > 🔹 **Banco de dados (Neon.tech):** (https://www.neon.tech)
 
 --
