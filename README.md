@@ -6,13 +6,21 @@ Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, vi
 
 ## 🔗 Acesso
 
-> Em breve: link para o deploy gratuito (ex: Vercel + Render)
+> Em breve: link do deply
 
 ---
 
+## Plataformas de hospedagem
+
+> 🔹 **Frontend (Vercel):** (https://vercel.com/home)  
+> 🔹 **Backend (Render):** (https://render.com/)
+> 🔹 **Banco de dados (Neon.tech):** (https://www.neon.tech)
+
+--
+
 ## 👩‍💻 Desenvolvedoras
 
-* **Vitória Luiza Camara** – Sistemas de Informação / UFSM
+* **Vitória Luiza Camara** – Sistemas de Informação / UFSM  
 * **Giulia Rodrigues de Araújo** – Ciência da Computação / UFSM
 
 ---
@@ -21,10 +29,10 @@ Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, vi
 
 Aplicação web com autenticação simplificada que oferece:
 
-* Cadastro de links favoritos
-* Edição e exclusão de links
-* Visualização dos links por usuário
-* Interface intuitiva com foco em usabilidade
+- Cadastro de links favoritos  
+- Edição e exclusão de links  
+- Visualização dos links por usuário  
+- Interface intuitiva com foco em usabilidade
 
 ---
 
@@ -32,35 +40,27 @@ Aplicação web com autenticação simplificada que oferece:
 
 Etapas principais do projeto:
 
-1. Definição do tema e funcionalidades
-2. Estruturação do frontend em React.js
-3. Criação do backend em Python (Flask ou FastAPI)
-4. Integração com banco de dados MySQL
-5. Implementação do CRUD
-6. Login com usuários pré-cadastrados
-7. Deploy gratuito (Frontend e Backend separados)
+1. Definição do tema e funcionalidades  
+2. Estruturação do frontend em React.js  
+3. Criação do backend em Python (Flask)  
+4. Integração com banco de dados PostgreSQL (Neon.tech)  
+5. Implementação do CRUD completo  
+6. Login com usuários pré-cadastrados  
+7. Deploy gratuito (Vercel + Render + Neon.tech)
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-* **Frontend:** React.js (HTML, CSS, JavaScript)
-* **Backend:** Python + MySQL
-* **Hospedagem:** (ex: Vercel para o frontend, Render ou Railway para o backend)
+- **Frontend:** React.js (HTML, CSS, JavaScript)  
+- **Backend:** Python (Flask) + PostgreSQL  
+- **Hospedagem:**  
+  - Frontend: Vercel  
+  - Backend: Render  
+  - Banco de Dados: Neon.tech  
 
 ---
 
-## 🧪 Ambiente de Desenvolvimento
+## ⚙️ Variáveis de Ambiente
 
-* Visual Studio Code
-* GitHub
-* Navegador Google Chrome
-
----
-
-## 📚 Referências e Créditos
-
-* API RESTful com Python (Flask/FastAPI)
-* React.js para construção de SPA
-* Tailwind CSS para estilização
-* Projeto entregue para a disciplina de **Desenvolvimento de Software para a Web** – 2025A / UFSM
+### Frontend (`.env`)
