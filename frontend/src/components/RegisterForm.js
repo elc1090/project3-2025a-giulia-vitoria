@@ -1,40 +1,68 @@
 import React, { useState } from 'react';
 
-function RegisterForm() {
+function RegisterForm({ onRegister }) {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('Cadastro:', { nome, email, senha });
+
+    try {
+      const response = await fetch("http://localhost:5000/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: nome,
+          email: email,
+          password: senha
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Usuário cadastrado com sucesso!");
+        setNome('');
+        setEmail('');
+        setSenha('');
+        if (onRegister) onRegister(); // opcional, para alternar aba
+      } else {
+        alert(`Erro: ${data.erro || 'Erro desconhecido'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao conectar com o servidor.");
+    }
   };
 
   return (
     <form onSubmit={handleRegister} style={styles.form}>
       <input
+        style={styles.input}
         type="text"
         placeholder="Nome"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
         required
-        style={styles.input}
       />
       <input
+        style={styles.input}
         type="email"
-        placeholder="Email"
+        placeholder="E-mail"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-        style={styles.input}
       />
       <input
+        style={styles.input}
         type="password"
         placeholder="Senha"
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
         required
-        style={styles.input}
       />
       <button type="submit" style={styles.button}>Cadastrar</button>
     </form>

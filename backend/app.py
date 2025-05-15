@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import get_connection
 import os
+import bcrypt
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +19,48 @@ def test_db():
         return jsonify({"status": "Conexão bem-sucedida", "resultado": result})
     except Exception as e:
         return jsonify({"status": "Erro na conexão", "erro": str(e)}), 500
+    pass
+
+def create_user(username, email, password):
+    conn = get_connection()
+    if not conn:
+        return False, "Erro na conexão com o banco"
+
+    try:
+        cur = conn.cursor()
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+
+        cur.execute("""
+            INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)
+        """, (username, email, hashed_password.decode('utf-8')))
+        conn.commit()
+        cur.close()
+        return True, "Usuário criado com sucesso"
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        conn.close()
+    pass
+
+@app.route("/usuarios", methods=["POST"])
+def cadastrar_usuario():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+        return jsonify({"erro": "Dados incompletos"}), 400
+
+    success, msg = create_user(username, email, password)
+
+    if success:
+        return jsonify({"msg": msg}), 201
+    else:
+        return jsonify({"erro": msg}), 400
+    pass
 
 @app.route("/bookmarks", methods=["GET"])
 def listar_bookmarks():
