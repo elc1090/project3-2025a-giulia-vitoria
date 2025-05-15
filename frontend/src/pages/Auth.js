@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 
-function Auth() {
+function Auth({ onLogin }) {
   const [activeTab, setActiveTab] = useState('register');
 
   const tabStyle = (tab) => ({
@@ -27,7 +27,7 @@ function Auth() {
         </div>
 
         <div style={{ marginTop: 20 }}>
-          {activeTab === 'login' ? <LoginForm /> : <RegisterForm />}
+          {activeTab === 'login' ? <LoginForm onLogin={onLogin} /> : <RegisterForm />}
         </div>
       </div>
     </div>

@@ -3,14 +3,34 @@ import React, { useState } from 'react';
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login:', { email, senha });
+    setErro(''); // limpa erro anterior
 
-    // Aqui você faria a requisição ao backend para autenticação
-    // Se login der certo:
-    if (onLogin) onLogin('Vitória'); // nome fictício só pra teste
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password: senha })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login bem-sucedido:", data);
+        if (onLogin) onLogin(data.username);  // envia nome real do backend
+      } else {
+        // Atualiza o estado de erro para mostrar na tela
+        setErro(data.erro || "Erro no login");
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      setErro("Erro ao conectar ao servidor");
+    }
   };
 
   return (
@@ -31,6 +51,7 @@ function LoginForm({ onLogin }) {
         required
         style={styles.input}
       />
+      {erro && <span style={styles.erro}>{erro}</span>}
       <button type="submit" style={styles.button}>Entrar</button>
     </form>
   );
@@ -57,6 +78,10 @@ const styles = {
     cursor: 'pointer',
     border: 'none',
     transition: 'background 0.3s'
+  },
+  erro: {
+    color: 'red',
+    fontSize: '14px'
   }
 };
 

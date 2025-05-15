@@ -5,7 +5,7 @@ import os
 import bcrypt
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 @app.route("/test-db")
 def test_db():
@@ -61,6 +61,41 @@ def cadastrar_usuario():
     else:
         return jsonify({"erro": msg}), 400
     pass
+
+@app.route("/login", methods=["POST", "OPTIONS"])
+def login():
+    if request.method == "OPTIONS":
+        # Resposta automática para o preflight
+        return jsonify({}), 200
+
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"erro": "Email e senha são obrigatórios"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT username, password_hash FROM users WHERE email = %s", (email,))
+        result = cur.fetchone()
+
+        if not result:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+
+        username, stored_hash = result
+
+        if bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
+            return jsonify({"msg": "Login bem-sucedido", "username": username}), 200
+        else:
+            return jsonify({"erro": "Senha incorreta"}), 401
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
 
 @app.route("/bookmarks", methods=["GET"])
 def listar_bookmarks():
