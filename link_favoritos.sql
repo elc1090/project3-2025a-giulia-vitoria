@@ -1,0 +1,7 @@
+CREATE TABLE bookmarks (
+  id SERIAL PRIMARY KEY,
+  titulo TEXT NOT NULL,
+  url TEXT NOT NULL,
+  descricao TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
