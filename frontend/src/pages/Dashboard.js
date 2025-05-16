@@ -8,17 +8,16 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Estados do formulário
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newDescription, setNewDescription] = useState('');
 
-  // Carrega os links da API ao montar o componente
+  const [editingLink, setEditingLink] = useState(null);
+
   useEffect(() => {
     fetch('http://localhost:5000/bookmarks')
       .then(res => res.json())
       .then(data => {
-        // Converte os campos do backend para os campos usados no frontend
         const formattedLinks = data.map(link => ({
           id: link.id,
           title: link.titulo,
@@ -32,12 +31,10 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       });
   }, []);
 
-  // Filtra os links pelo termo de busca
   const filteredLinks = links.filter(link =>
     link.title && link.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Adiciona um novo link via API
   const handleAddLink = async (e) => {
     e.preventDefault();
     if (!newTitle || !newUrl) {
@@ -78,12 +75,41 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     }
   };
 
-  // Editar (exemplo simples)
-  const handleEdit = (link) => {
-    alert(`Editar link: ${link.title}`);
-  };
+  function handleEdit(link) {
+    setEditingLink({
+      ...link,
+      titulo: link.title,
+      descricao: link.description
+    });
+  }
 
-  // Deletar link via API
+  async function salvarEdicao(e) {
+    e.preventDefault();
+
+    const res = await fetch(`http://localhost:5000/bookmarks/${editingLink.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titulo: editingLink.titulo,
+        url: editingLink.url,
+        descricao: editingLink.descricao,
+      }),
+    });
+
+    if (res.ok) {
+      const updated = {
+        id: editingLink.id,
+        title: editingLink.titulo,
+        url: editingLink.url,
+        description: editingLink.descricao,
+      };
+      setLinks(links.map(l => l.id === updated.id ? updated : l));
+      setEditingLink(null);
+    } else {
+      alert("Erro ao editar");
+    }
+  }
+
   const handleDelete = async (id) => {
     if (!window.confirm('Deseja realmente excluir esse link?')) return;
 
@@ -134,6 +160,36 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
             />
             <button type="submit" style={styles.button}>Adicionar Link</button>
           </form>
+
+          {editingLink && (
+            <form onSubmit={salvarEdicao} style={{ ...styles.form, backgroundColor: '#fff', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+              <input
+                type="text"
+                placeholder="Título"
+                value={editingLink.titulo}
+                onChange={e => setEditingLink({ ...editingLink, titulo: e.target.value })}
+                style={styles.input}
+                required
+              />
+              <input
+                type="url"
+                placeholder="URL"
+                value={editingLink.url}
+                onChange={e => setEditingLink({ ...editingLink, url: e.target.value })}
+                style={styles.input}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Descrição"
+                value={editingLink.descricao || ''}
+                onChange={e => setEditingLink({ ...editingLink, descricao: e.target.value })}
+                style={styles.input}
+              />
+              <button type="submit" style={styles.button}>Salvar</button>
+              <button type="button" onClick={() => setEditingLink(null)} style={{ ...styles.button, backgroundColor: 'gray' }}>Cancelar</button>
+            </form>
+          )}
 
           <LinkList
             links={filteredLinks}
