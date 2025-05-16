@@ -1,13 +1,13 @@
 import React from 'react';
 
-export default function LinkList({ links, onEdit, onDelete, grid }) {
+export default function LinkList({ links, onEdit, onDelete }) {
   if (!links || links.length === 0) {
     return <p style={{ padding: '20px' }}>Nenhum link encontrado.</p>;
   }
 
   const containerStyle = {
-    display: 'grid',
-    gridTemplateColumns: grid ? 'repeat(auto-fit, minmax(250px, 1fr))' : '1fr',
+    display: 'flex',
+    flexWrap: 'wrap',
     gap: '16px',
   };
 
@@ -16,7 +16,14 @@ export default function LinkList({ links, onEdit, onDelete, grid }) {
     padding: '16px',
     borderRadius: '8px',
     boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-    position: 'relative',
+    width: '250px',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+  };
+
+  const cardHoverStyle = {
+    transform: 'translateY(-4px)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   };
 
   const titleStyle = {
@@ -31,7 +38,7 @@ export default function LinkList({ links, onEdit, onDelete, grid }) {
     color: '#333',
     textDecoration: 'none',
     wordBreak: 'break-all',
-    fontSize: '14px'
+    fontSize: '14px',
   };
 
   const buttonContainerStyle = {
@@ -54,13 +61,19 @@ export default function LinkList({ links, onEdit, onDelete, grid }) {
   return (
     <div style={containerStyle}>
       {links.map(link => (
-        <div key={link.id} style={cardStyle}>
+        <div
+          key={link.id}
+          style={cardStyle}
+          onClick={() => window.open(link.url, '_blank')}
+          onMouseEnter={e => Object.assign(e.currentTarget.style, cardHoverStyle)}
+          onMouseLeave={e => Object.assign(e.currentTarget.style, cardStyle)}
+        >
           <div style={titleStyle}>{link.title}</div>
           <div><span style={urlStyle}>{link.url}</span></div>
           <div style={{ marginTop: '8px', fontSize: '14px', color: '#555' }}>
             {link.description}
           </div>
-          <div style={buttonContainerStyle}>
+          <div style={buttonContainerStyle} onClick={e => e.stopPropagation()}>
             <button style={buttonStyle} onClick={() => onEdit(link)}>Editar</button>
             <button style={buttonStyle} onClick={() => onDelete(link.id)}>Excluir</button>
           </div>
