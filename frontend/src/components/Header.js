@@ -1,34 +1,32 @@
 import React, { useState } from 'react';
 
-export default function Header({ onSearch }) {
+export default function Header({ onSearch, nomeUsuario, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleLogout = () => {
-    // Lógica de logout (por exemplo, remover token, redirecionar, etc.)
-    console.log("Logout efetuado");
-    window.location.href = '/'; // ou redirecione para a tela de login
-  };
 
   return (
     <header style={styles.header}>
       <div style={styles.logo}>Linkaí</div>
-      <input
-        type="search"
-        placeholder="Buscar links..."
-        onChange={e => onSearch(e.target.value)}
-        style={styles.search}
-      />
-      <div style={styles.profileContainer}>
-        <div style={styles.profile} onClick={() => setMenuOpen(!menuOpen)}>
-          Vitória ▾
-        </div>
-        {menuOpen && (
-          <div style={styles.dropdown}>
-            <button onClick={handleLogout} style={styles.dropdownItem}>
-              Sair
-            </button>
+
+      <div style={styles.rightSection}>
+        <input
+          type="search"
+          placeholder="Buscar links..."
+          onChange={e => onSearch(e.target.value)}
+          style={styles.search}
+        />
+
+        <div style={styles.profileContainer}>
+          <div style={styles.profile} onClick={() => setMenuOpen(!menuOpen)}>
+            {nomeUsuario} ▾
           </div>
-        )}
+          {menuOpen && (
+            <div style={styles.dropdown}>
+              <button onClick={onLogout} style={styles.dropdownItem}>
+                Sair
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
@@ -44,10 +42,17 @@ const styles = {
     padding: '10px 20px',
     position: 'relative',
   },
-  logo: { fontSize: '24px', fontWeight: 'bold' },
+  logo: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+  },
+  rightSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '15px',
+  },
   search: {
-    flexGrow: 1,
-    margin: '0 20px',
+    width: '200px',
     padding: '8px 12px',
     borderRadius: '6px',
     border: 'none',

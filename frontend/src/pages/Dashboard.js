@@ -1,62 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import LinkList from '../components/LinkList';
 
-const MOCK_LINKS = [
-  { id: 1, title: 'React', url: 'https://reactjs.org', description: 'Biblioteca JS para UI' },
-  { id: 2, title: 'GitHub', url: 'https://github.com', description: 'Hospedagem de código' },
-  { id: 3, title: 'Stack Overflow', url: 'https://stackoverflow.com', description: 'Perguntas e respostas' },
-];
-
-export default function Dashboard() {
-  const [links, setLinks] = useState(MOCK_LINKS);
+export default function Dashboard({ nomeUsuario, onLogout }) {
+  const [links, setLinks] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Estado do formulário
+  // Estados do formulário
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newDescription, setNewDescription] = useState('');
 
+  // Carrega os links da API ao montar o componente
+  useEffect(() => {
+    fetch('http://localhost:5000/bookmarks')
+      .then(res => res.json())
+      .then(data => {
+        // Converte os campos do backend para os campos usados no frontend
+        const formattedLinks = data.map(link => ({
+          id: link.id,
+          title: link.titulo,
+          url: link.url,
+          description: link.descricao || ''
+        }));
+        setLinks(formattedLinks);
+      })
+      .catch(err => {
+        console.error('Erro ao carregar links:', err);
+      });
+  }, []);
+
+  // Filtra os links pelo termo de busca
   const filteredLinks = links.filter(link =>
-    link.title.toLowerCase().includes(searchTerm.toLowerCase())
+    link.title && link.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddLink = (e) => {
+  // Adiciona um novo link via API
+  const handleAddLink = async (e) => {
     e.preventDefault();
     if (!newTitle || !newUrl) {
       alert('Título e URL são obrigatórios!');
       return;
     }
 
-    const newLink = {
-      id: Date.now(),
-      title: newTitle,
+    const newLinkData = {
+      titulo: newTitle,
       url: newUrl,
-      description: newDescription
+      descricao: newDescription
     };
 
-    setLinks([newLink, ...links]);
-    setNewTitle('');
-    setNewUrl('');
-    setNewDescription('');
+    try {
+      const res = await fetch('http://localhost:5000/bookmarks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLinkData)
+      });
+
+      if (!res.ok) throw new Error('Erro ao adicionar link');
+
+      const result = await res.json();
+
+      const newLink = {
+        id: result.id,
+        title: newTitle,
+        url: newUrl,
+        description: newDescription
+      };
+
+      setLinks([newLink, ...links]);
+      setNewTitle('');
+      setNewUrl('');
+      setNewDescription('');
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
+  // Editar (exemplo simples)
   const handleEdit = (link) => {
     alert(`Editar link: ${link.title}`);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Deseja realmente excluir esse link?')) {
+  // Deletar link via API
+  const handleDelete = async (id) => {
+    if (!window.confirm('Deseja realmente excluir esse link?')) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/bookmarks/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) throw new Error('Erro ao deletar link');
+
       setLinks(current => current.filter(link => link.id !== id));
       setFavorites(current => current.filter(fav => fav.id !== id));
+    } catch (error) {
+      alert(error.message);
     }
   };
 
   return (
     <div style={styles.container}>
-      <Header onSearch={setSearchTerm} />
+      <Header onSearch={setSearchTerm} nomeUsuario={nomeUsuario} onLogout={onLogout} />
       <div style={styles.main}>
         <Sidebar favorites={favorites} />
 

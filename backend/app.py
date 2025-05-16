@@ -117,14 +117,20 @@ def criar_bookmark():
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO bookmarks (titulo, url, descricao) VALUES (%s, %s, %s) RETURNING id",
+        "INSERT INTO bookmarks (titulo, url, descricao) VALUES (%s, %s, %s) RETURNING id, titulo, url, descricao, criado_em",
         (data["titulo"], data["url"], data.get("descricao"))
     )
+    new_bookmark = cur.fetchone()
     conn.commit()
-    new_id = cur.fetchone()[0]
     cur.close()
     conn.close()
-    return jsonify({"id": new_id}), 201
+    return jsonify({
+        "id": new_bookmark[0],
+        "titulo": new_bookmark[1],
+        "url": new_bookmark[2],
+        "descricao": new_bookmark[3],
+        "criado_em": new_bookmark[4].isoformat()
+    }), 201
 
 @app.route("/bookmarks/<int:id>", methods=["PUT"])
 def atualizar_bookmark(id):
