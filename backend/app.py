@@ -62,46 +62,48 @@ def cadastrar_usuario():
         return jsonify({"erro": msg}), 400
     pass
 
-@app.route("/login", methods=["POST", "OPTIONS"])
+@app.route("/login", methods=["POST"])
 def login():
-    if request.method == "OPTIONS":
-        # Resposta automática para o preflight
-        return jsonify({}), 200
-
     data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-
-    if not email or not password:
-        return jsonify({"erro": "Email e senha são obrigatórios"}), 400
+    email = data.get("email")
+    senha = data.get("senha")  
 
     conn = get_connection()
     cur = conn.cursor()
-    try:
-        cur.execute("SELECT username, password_hash FROM users WHERE email = %s", (email,))
-        result = cur.fetchone()
 
-        if not result:
-            return jsonify({"erro": "Usuário não encontrado"}), 404
+    cur.execute("SELECT id, username, email, password_hash, criado_em FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
 
-        username, stored_hash = result
+    cur.close()
+    conn.close()
 
-        if bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
-            return jsonify({"msg": "Login bem-sucedido", "username": username}), 200
-        else:
-            return jsonify({"erro": "Senha incorreta"}), 401
+    if user is None:
+        return jsonify({"erro": "Usuário não encontrado"}), 401
 
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
-    finally:
-        cur.close()
-        conn.close()
+    stored_hash = user[3]
+
+    if stored_hash and bcrypt.checkpw(senha.encode('utf-8'), stored_hash.encode('utf-8')):
+        return jsonify({
+            "msg": "Login bem-sucedido",
+            "user_id": user[0],
+            "username": user[1]
+        })
+
+    return jsonify({"erro": "Credenciais inválidas"}), 401
 
 @app.route("/bookmarks", methods=["GET"])
 def listar_bookmarks():
+    user_id = request.args.get("user_id")
+
+    if not user_id:
+        return jsonify({"erro": "user_id não fornecido"}), 400
+
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, titulo, url, descricao, criado_em FROM bookmarks ORDER BY criado_em DESC")
+    cur.execute(
+        "SELECT id, titulo, url, descricao, criado_em FROM bookmarks WHERE user_id = %s ORDER BY criado_em DESC",
+        (user_id,)
+    )
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -111,26 +113,34 @@ def listar_bookmarks():
     ]
     return jsonify(bookmarks)
 
-@app.route("/bookmarks", methods=["POST"])
+
+@app.route('/bookmarks', methods=['POST'])
 def criar_bookmark():
-    data = request.get_json()
+    data = request.json
+    titulo = data.get('titulo')
+    url = data.get('url')
+    descricao = data.get('descricao')
+    user_id = data.get('user_id') 
+
+    if not titulo or not url or not user_id:
+        return jsonify({'erro': 'Campos obrigatórios faltando'}), 400
+
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO bookmarks (titulo, url, descricao) VALUES (%s, %s, %s) RETURNING id, titulo, url, descricao, criado_em",
-        (data["titulo"], data["url"], data.get("descricao"))
-    )
-    new_bookmark = cur.fetchone()
+
+    cur.execute('''
+        INSERT INTO bookmarks (user_id, titulo, url, descricao)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
+    ''', (user_id, titulo, url, descricao))  
+
+    novo_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
-    return jsonify({
-        "id": new_bookmark[0],
-        "titulo": new_bookmark[1],
-        "url": new_bookmark[2],
-        "descricao": new_bookmark[3],
-        "criado_em": new_bookmark[4].isoformat()
-    }), 201
+
+    return jsonify({'id': novo_id}), 201
+
 
 @app.route("/bookmarks/<int:id>", methods=["PUT"])
 def atualizar_bookmark(id):

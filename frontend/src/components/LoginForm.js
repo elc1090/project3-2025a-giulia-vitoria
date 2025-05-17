@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function LoginForm({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro(''); // limpa erro anterior
+    setErro("");
 
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password: senha })
+        body: JSON.stringify({ email, senha }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         console.log("Login bem-sucedido:", data);
-        if (onLogin) onLogin(data.username);  // envia nome real do backend
+
+        localStorage.setItem("user_id", data.user_id);
+
+        if (onLogin) onLogin(data.username);
       } else {
-        // Atualiza o estado de erro para mostrar na tela
         setErro(data.erro || "Erro no login");
       }
     } catch (error) {
@@ -52,37 +54,39 @@ function LoginForm({ onLogin }) {
         style={styles.input}
       />
       {erro && <span style={styles.erro}>{erro}</span>}
-      <button type="submit" style={styles.button}>Entrar</button>
+      <button type="submit" style={styles.button}>
+        Entrar
+      </button>
     </form>
   );
 }
 
 const styles = {
   form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px'
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
   },
   input: {
-    padding: '12px',
-    borderRadius: '8px',
-    border: '1px solid #ccc',
-    fontSize: '16px'
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "16px",
   },
   button: {
-    padding: '12px',
-    borderRadius: '8px',
-    backgroundColor: '#2c3e50',
-    color: '#fff',
-    fontSize: '16px',
-    cursor: 'pointer',
-    border: 'none',
-    transition: 'background 0.3s'
+    padding: "12px",
+    borderRadius: "8px",
+    backgroundColor: "#2c3e50",
+    color: "#fff",
+    fontSize: "16px",
+    cursor: "pointer",
+    border: "none",
+    transition: "background 0.3s",
   },
   erro: {
-    color: 'red',
-    fontSize: '14px'
-  }
+    color: "red",
+    fontSize: "14px",
+  },
 };
 
 export default LoginForm;
