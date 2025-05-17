@@ -66,12 +66,12 @@ def cadastrar_usuario():
 def login():
     data = request.get_json()
     email = data.get("email")
-    senha = data.get("senha")  
+    password = data.get("password")  
 
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT id, username, email, password_hash, criado_em FROM users WHERE email = %s", (email,))
+    cur.execute("SELECT id, username, email, password_hash FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
 
     cur.close()
@@ -82,7 +82,7 @@ def login():
 
     stored_hash = user[3]
 
-    if stored_hash and bcrypt.checkpw(senha.encode('utf-8'), stored_hash.encode('utf-8')):
+    if stored_hash and bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
         return jsonify({
             "msg": "Login bem-sucedido",
             "user_id": user[0],
