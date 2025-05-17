@@ -1,17 +1,17 @@
-CREATE TABLE bookmarks (
-  id SERIAL PRIMARY KEY,
-  titulo TEXT NOT NULL,
-  url TEXT NOT NULL,
-  descricao TEXT,
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
 );
 
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE bookmarks (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    titulo TEXT NOT NULL,
+    url TEXT NOT NULL,
+    descricao TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Adiciona coluna user_id na tabela bookmarks, permitindo NULL por enquanto
