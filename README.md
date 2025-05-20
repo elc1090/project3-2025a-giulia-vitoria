@@ -2,7 +2,8 @@
 
 Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, visualizar, editar e remover seus links favoritos. Os dados são armazenados no servidor e associados a usuários pré-definidos.
 
-![Captura de Tela](https://github.com/iamvitoria/Front-Bookmark/assets/your-correct-path/aqui.jpg)
+![image](https://github.com/user-attachments/assets/6a1438af-1460-4a0f-8f93-c1e66c952607)
+
 
 ## 🔗 Acesso
 
@@ -60,8 +61,6 @@ Etapas principais do projeto:
   - Banco de Dados: Neon.tech  
 
 ---
-
-## ⚙️ Variáveis de Ambiente
 
 ## Repositório FrontEnd
 
