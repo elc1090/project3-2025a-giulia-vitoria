@@ -2,26 +2,26 @@
 
 Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, visualizar, editar e remover seus links favoritos. Os dados são armazenados no servidor e associados a usuários pré-definidos.
 
-![Screenshot do projeto](image)
+![Captura de Tela](https://github.com/iamvitoria/Front-Bookmark/assets/your-correct-path/aqui.jpg)
 
 ## 🔗 Acesso
 
-> Em breve: link do deploy
+- **Frontend:** https://front-bookmark-eyhwd53gi-vitoria-luiza-camaras-projects.vercel.app/
 
 ---
 
-## Plataformas de hospedagem
+## 📦 Plataformas de Hospedagem
 
-> 🔹 **Frontend (Vercel):** (https://vercel.com/home)  
-> 🔹 **Backend (Render):** (https://render.com/)
-> 🔹 **Banco de dados (Neon.tech):** (https://www.neon.tech)
+- **Frontend:** [Vercel](https://vercel.com/home)  
+- **Backend:** [Render](https://render.com/)  
+- **Banco de Dados:** [Neon.tech](https://www.neon.tech)
 
 ---
 
 ## 👩‍💻 Desenvolvedoras
 
-* **Vitória Luiza Camara** – Sistemas de Informação / UFSM  
-* **Giulia Rodrigues de Araújo** – Ciência da Computação / UFSM
+- **Vitória Luiza Camara** – Sistemas de Informação / UFSM  
+- **Giulia Rodrigues de Araújo** – Ciência da Computação / UFSM
 
 ---
 
@@ -63,4 +63,7 @@ Etapas principais do projeto:
 
 ## ⚙️ Variáveis de Ambiente
 
-### Frontend (`.env`)
+## Repositório FrontEnd
+
+- Optamos por separar o front e o back em diferentes repositórios a fim de facilitar o deploy do projeto. 
+- Repositório do [FrontEnd](https://github.com/iamvitoria/Front-Bookmark.git)
