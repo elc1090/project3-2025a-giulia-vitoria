@@ -166,6 +166,43 @@ def deletar_bookmark(id):
     conn.close()
     return jsonify({"msg": "Deletado com sucesso"})
 
+@app.route('/folders', methods=['GET'])
+def listar_folders():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return jsonify({'erro': 'user_id não fornecido'}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, nome FROM folders WHERE user_id = %s', (user_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    folders = [{'id': r[0], 'nome': r[1]} for r in rows]
+
+    return jsonify(folders)
+
+@app.route('/folders', methods=['POST'])
+def criar_folder():
+    data = request.get_json()
+    nome = data.get('nome')
+    user_id = data.get('user_id')
+
+    if not nome or not user_id:
+        return jsonify({'erro': 'Campos obrigatórios faltando'}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('INSERT INTO folders (user_id, nome) VALUES (%s, %s) RETURNING id', (user_id, nome))
+    novo_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({'id': novo_id}), 201
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # usa a porta fornecida pelo Render ou 5000 localmente
     app.run(host="0.0.0.0", port=port, debug=True)
