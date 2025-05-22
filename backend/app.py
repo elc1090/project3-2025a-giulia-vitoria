@@ -5,12 +5,15 @@ import os
 import bcrypt
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
-CORS(app, 
-     origins=['https://front-bookmark.vercel.app'],
-     supports_credentials=True,
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     allow_headers=["Content-Type", "Authorization"])
+@app.route('/folders', methods=['OPTIONS'])
+def folders_options():
+    return '', 204
+
+@app.route('/bookmarks', methods=['OPTIONS'])
+def bookmarks_options():
+    return '', 204
 
 @app.route("/test-db")
 def test_db():
