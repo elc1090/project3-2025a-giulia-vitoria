@@ -1,11 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from db import get_connection
 import os
 import bcrypt
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=['https://front-bookmark.vercel.app'])
+
+CORS(app, 
+     origins=['https://front-bookmark.vercel.app'],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"])
 
 @app.route("/test-db")
 def test_db():
