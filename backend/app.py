@@ -5,9 +5,7 @@ import bcrypt
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
-
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 @app.route("/test-db")
 def test_db():
