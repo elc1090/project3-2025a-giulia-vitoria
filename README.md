@@ -7,7 +7,7 @@ Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, vi
 
 ## 🔗 Acesso
 
-- **Frontend:** https://front-bookmark-eyhwd53gi-vitoria-luiza-camaras-projects.vercel.app/
+- **Frontend:** https://front-bookmark.vercel.app
 
 ---
 
