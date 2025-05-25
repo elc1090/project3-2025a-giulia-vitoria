@@ -102,23 +102,34 @@ def login():
 @app.route("/bookmarks", methods=["GET"])
 def listar_bookmarks():
     user_id = request.args.get("user_id")
+    folder_id = request.args.get("folder_id")
 
     if not user_id:
         return jsonify({"erro": "user_id não fornecido"}), 400
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        "SELECT id, titulo, url, descricao, criado_em FROM bookmarks WHERE user_id = %s ORDER BY criado_em DESC",
-        (user_id,)
-    )
+
+    if folder_id:
+        cur.execute(
+            "SELECT id, titulo, url, descricao, criado_em FROM bookmarks WHERE user_id = %s AND folder_id = %s ORDER BY criado_em DESC",
+            (user_id, folder_id)
+        )
+    else:
+        cur.execute(
+            "SELECT id, titulo, url, descricao, criado_em FROM bookmarks WHERE user_id = %s ORDER BY criado_em DESC",
+            (user_id,)
+        )
+
     rows = cur.fetchall()
     cur.close()
     conn.close()
+
     bookmarks = [
         {"id": r[0], "titulo": r[1], "url": r[2], "descricao": r[3], "criado_em": r[4].isoformat()}
         for r in rows
     ]
+
     return jsonify(bookmarks)
 
 
