@@ -129,7 +129,6 @@ def listar_bookmarks():
         {"id": r[0], "titulo": r[1], "url": r[2], "descricao": r[3], "criado_em": r[4].isoformat()}
         for r in rows
     ]
-
     return jsonify(bookmarks)
 
 
@@ -139,7 +138,8 @@ def criar_bookmark():
     titulo = data.get('titulo')
     url = data.get('url')
     descricao = data.get('descricao')
-    user_id = data.get('user_id') 
+    user_id = data.get('user_id')
+    folder_id = data.get('folder_id')
 
     if not titulo or not url or not user_id:
         return jsonify({'erro': 'Campos obrigatórios faltando'}), 400
@@ -148,10 +148,10 @@ def criar_bookmark():
     cur = conn.cursor()
 
     cur.execute('''
-        INSERT INTO bookmarks (user_id, titulo, url, descricao)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO bookmarks (user_id, folder_id, titulo, url, descricao)
+        VALUES (%s, %s, %s, %s, %s)
         RETURNING id
-    ''', (user_id, titulo, url, descricao))  
+    ''', (user_id, folder_id, titulo, url, descricao))
 
     novo_id = cur.fetchone()[0]
     conn.commit()
