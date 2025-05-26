@@ -194,27 +194,27 @@ def listar_folders():
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute('SELECT id, nome FROM folders WHERE user_id = %s', (user_id,))
+    cur.execute('SELECT id, name FROM folders WHERE user_id = %s', (user_id,))
     rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    folders = [{'id': r[0], 'nome': r[1]} for r in rows]
+    folders = [{'id': r[0], 'name': r[1]} for r in rows]
 
     return jsonify(folders)
 
 @app.route('/folders', methods=['POST'])
 def criar_folder():
     data = request.get_json()
-    nome = data.get('nome')
+    name = data.get('name')
     user_id = data.get('user_id')
 
-    if not nome or not user_id:
+    if not name or not user_id:
         return jsonify({'erro': 'Campos obrigatórios faltando'}), 400
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute('INSERT INTO folders (user_id, nome) VALUES (%s, %s) RETURNING id', (user_id, nome))
+    cur.execute('INSERT INTO folders (user_id, name) VALUES (%s, %s) RETURNING id', (user_id, name))
     novo_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
