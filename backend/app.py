@@ -222,6 +222,33 @@ def criar_folder():
 
     return jsonify({'id': novo_id}), 201
 
+@app.route('/folders/int:folder_id', methods=['PUT'])
+def atualizar_pasta(folder_id):
+    data = request.get_json()
+    novo_nome = data.get('name')
+    if not novo_nome:
+        return jsonify({'erro': 'Nome é obrigatório'}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE folders SET name = %s WHERE id = %s", (novo_nome, folder_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+    return jsonify({'msg': 'Pasta atualizada com sucesso'})
+
+@app.route('/folders/int:folder_id', methods=['DELETE'])
+def deletar_pasta(folder_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM folders WHERE id = %s", (folder_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+    return jsonify({'msg': 'Pasta deletada com sucesso'})
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # usa a porta fornecida pelo Render ou 5000 localmente
     app.run(host="0.0.0.0", port=port, debug=True)
