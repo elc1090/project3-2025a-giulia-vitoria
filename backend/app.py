@@ -222,7 +222,7 @@ def criar_folder():
 
     return jsonify({'id': novo_id}), 201
 
-@app.route('/folders/int:folder_id', methods=['PUT'])
+@app.route('/folders/<int:folder_id>', methods=['PUT'])
 def atualizar_pasta(folder_id):
     data = request.get_json()
     novo_nome = data.get('name')
@@ -238,7 +238,7 @@ def atualizar_pasta(folder_id):
     
     return jsonify({'msg': 'Pasta atualizada com sucesso'})
 
-@app.route('/folders/int:folder_id', methods=['DELETE'])
+@app.route('/folders/<int:folder_id>', methods=['DELETE'])
 def deletar_pasta(folder_id):
     conn = get_connection()
     cur = conn.cursor()
