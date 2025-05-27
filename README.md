@@ -8,6 +8,8 @@ Uma aplicação fullstack que permite aos usuários cadastrados compartilhar, vi
 ## 🔗 Acesso
 
 - **Frontend:** https://front-bookmark.vercel.app
+- Para acessar, você pode criar um novo usuário, ou fazer login com algum já existente
+- Usuário para teste: vitoria@gmail.com, 1234
 
 ---
 
